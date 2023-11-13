@@ -17,6 +17,7 @@ class MainWindow:
         self.coefficients_inputs = {}
         self.setup_ui()
         self.plot_window, self.fig, self.canvas = initialize_plot_window(root)
+        self.stats_window = StatisticsWindow(self.root)
         self.on_update_plot()  # Load and process the default Excel file
         self.stats_window = StatisticsWindow(self.root)
 
@@ -53,7 +54,8 @@ class MainWindow:
             data_sheets = load_and_process_data(self.excel_path, coeffs)
             update_plot(data_sheets, self.fig, self.canvas)
 
-        mea1 = calculate_mea(data_sheets, (35, 65), 'Predicted_TunnelTemp')
-        mea2 = calculate_mea(data_sheets, (52, 63), 'Predicted_TunnelTemp')
-        stats_text = f"MEA 35-65°C: {mea1}\nMEA 52-63°C: {mea2}"
-        self.stats_window.update_statistics(stats_text)
+        for file_name, sheet_name, data in data_sheets:
+            mea1 = calculate_mea(data, (35, 65), 'Predicted_TunnelTemp')
+            mea2 = calculate_mea(data, (52, 63), 'Predicted_TunnelTemp')
+            stats_text = f"MEA 35-65°C: {mea1}\nMEA 52-63°C: {mea2}"
+            self.stats_window.update_statistics(stats_text)
