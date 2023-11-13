@@ -35,7 +35,7 @@ def update_plot(data_sheets, fig, canvas):
 
 def initialize_plot_window(root):
     plot_window, frame_plot = create_plot_window(root)
-    fig = Figure(figsize=(12, 8))
+    fig = Figure(figsize=(10, 8))
     canvas = FigureCanvasTkAgg(fig, master=frame_plot)
     canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
     return plot_window, fig, canvas

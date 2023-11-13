@@ -11,10 +11,11 @@ from models.equations import default_coeffs
 class MainWindow:
     def __init__(self, root):
         self.root = root
-        self.excel_path = ''
+        self.excel_path = 'data/3C.xlsx'  # Set the default Excel file path here
         self.coefficients_inputs = {}
         self.setup_ui()
         self.plot_window, self.fig, self.canvas = initialize_plot_window(root)
+        self.on_update_plot()  # Load and process the default Excel file
 
     def setup_ui(self):
         self.root.title("Input Coefficients")
