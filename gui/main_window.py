@@ -53,9 +53,9 @@ class MainWindow:
         if self.excel_path:
             data_sheets = load_and_process_data(self.excel_path, coeffs)
             update_plot(data_sheets, self.fig, self.canvas)
-
+        stats_text = ""  # Initialize an empty string to collect all MEA stats
         for file_name, sheet_name, data in data_sheets:
             mea1 = calculate_mea(data, (35, 65), 'Predicted_TunnelTemp')
             mea2 = calculate_mea(data, (52, 63), 'Predicted_TunnelTemp')
-            stats_text = f"MEA 35-65°C: {mea1}\nMEA 52-63°C: {mea2}"
+            stats_text = f"Sheet '{sheet_name}' MEA 35-65°C: {mea1}\n          MEA 52-63°C: {mea2}"
             self.stats_window.update_statistics(stats_text)

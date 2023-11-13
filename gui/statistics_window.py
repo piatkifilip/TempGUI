@@ -9,5 +9,6 @@ class StatisticsWindow:
         self.text_widget.pack()
 
     def update_statistics(self, stats_text):
-        self.text_widget.insert(tk.END, stats_text + '\n')
-        self.text_widget.see(tk.END)
+        # Insert the new stats at the end of the text widget, followed by a newline for separation
+        self.text_widget.insert(tk.END, stats_text + '\n\n')  # Adding an extra newline for better separation
+        self.text_widget.see(tk.END)  # Auto-scroll to the end
