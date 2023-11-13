@@ -2,6 +2,7 @@
 
 import tkinter as tk
 from models.equations import terms
+current_sheet_index = 0
 
 def create_coefficient_inputs(frame, eq_label, default_values):
     entries = []

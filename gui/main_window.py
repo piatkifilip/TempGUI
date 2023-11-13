@@ -8,7 +8,7 @@ from gui.data_processing import load_and_process_data
 from models.equations import default_coeffs
 from .data_processing import calculate_mea
 from .statistics_window import StatisticsWindow
-
+current_sheet_index = 0
 
 class MainWindow:
     def __init__(self, root):
@@ -20,6 +20,11 @@ class MainWindow:
         self.stats_window = StatisticsWindow(self.root)
         self.on_update_plot()  # Load and process the default Excel file
         self.stats_window = StatisticsWindow(self.root)
+        prev_button = tk.Button(self, text="Previous", command=self.prev_file)
+        prev_button.pack(side=tk.LEFT)
+
+        next_button = tk.Button(self, text="Next", command=self.next_file)
+        next_button.pack(side=tk.RIGHT)
 
     def setup_ui(self):
         self.root.title("Input Coefficients")
@@ -57,5 +62,24 @@ class MainWindow:
         for file_name, sheet_name, data in data_sheets:
             mea1 = calculate_mea(data, (35, 65), 'Predicted_TunnelTemp')
             mea2 = calculate_mea(data, (52, 63), 'Predicted_TunnelTemp')
-            stats_text = f"Sheet '{sheet_name}' MEA 35-65°C: {mea1}\n          MEA 52-63°C: {mea2}"
+            stats_text += f"Sheet '{sheet_name}' MEA 35-65°C: {mea1}\n          MEA 52-63°C: {mea2}"
             self.stats_window.update_statistics(stats_text)
+
+    def next_file():
+        global current_file_index
+        global data_sheets
+        global fig
+        global canvas
+
+        current_file_index = (current_file_index + 1) % len(data_sheets)
+        update_plot(data_sheets, fig, canvas)
+
+    # Function to handle the 'Previous' button click
+    def prev_file():
+        global current_file_index
+        global data_sheets
+        global fig
+        global canvas
+
+        current_file_index = (current_file_index - 1) % len(data_sheets)
+        update_plot(data_sheets, fig, canvas)

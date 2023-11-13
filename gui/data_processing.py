@@ -5,6 +5,7 @@ import numpy as np
 from tkinter import messagebox
 from models.equations import default_coeffs
 from sklearn.metrics import mean_absolute_error
+current_sheet_index = 0
 
 def predict_tunnel_temp(row, coeffs):
     delta = row['delta']

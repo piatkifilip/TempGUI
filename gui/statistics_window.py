@@ -1,4 +1,5 @@
 import tkinter as tk
+current_sheet_index = 0
 
 class StatisticsWindow:
     def __init__(self, master):
@@ -9,6 +10,5 @@ class StatisticsWindow:
         self.text_widget.pack()
 
     def update_statistics(self, stats_text):
-        # Insert the new stats at the end of the text widget, followed by a newline for separation
-        self.text_widget.insert(tk.END, stats_text + '\n\n')  # Adding an extra newline for better separation
-        self.text_widget.see(tk.END)  # Auto-scroll to the end
+        self.text_widget.delete(1.0, tk.END)  # Clear the previous statistics
+        self.text_widget.insert(tk.END, stats_text)
