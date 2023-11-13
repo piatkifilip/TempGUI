@@ -6,6 +6,8 @@ from gui.coefficients import create_coefficient_inputs
 from gui.plot_window import initialize_plot_window, update_plot
 from gui.data_processing import load_and_process_data
 from models.equations import default_coeffs
+from .data_processing import calculate_mea
+from .statistics_window import StatisticsWindow
 
 
 class MainWindow:
@@ -16,6 +18,7 @@ class MainWindow:
         self.setup_ui()
         self.plot_window, self.fig, self.canvas = initialize_plot_window(root)
         self.on_update_plot()  # Load and process the default Excel file
+        self.stats_window = StatisticsWindow(self.root)
 
     def setup_ui(self):
         self.root.title("Input Coefficients")
@@ -49,3 +52,8 @@ class MainWindow:
         if self.excel_path:
             data_sheets = load_and_process_data(self.excel_path, coeffs)
             update_plot(data_sheets, self.fig, self.canvas)
+
+        mea1 = calculate_mea(data_sheets, (35, 65), 'Predicted_TunnelTemp')
+        mea2 = calculate_mea(data_sheets, (52, 63), 'Predicted_TunnelTemp')
+        stats_text = f"MEA 35-65°C: {mea1}\nMEA 52-63°C: {mea2}"
+        self.stats_window.update_statistics(stats_text)

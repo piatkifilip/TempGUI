@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from tkinter import messagebox
 from models.equations import default_coeffs
+from sklearn.metrics import mean_absolute_error
 
 def predict_tunnel_temp(row, coeffs):
     delta = row['delta']
@@ -31,3 +32,9 @@ def load_and_process_data(excel_path, coeffs):
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred while processing the data: {e}")
         return None
+def calculate_mea(data, temp_range, predictions, actual='TunnelTemp'):
+    mask = (data[actual] >= temp_range[0]) & (data[actual] <= temp_range[1])
+    return mean_absolute_error(data.loc[mask, actual], data.loc[mask, predictions])
+
+# Update the load_and_process_data function to also calculate MEA
+# This means you'll need to return the MEA values as well and handle these in your main_window.py
