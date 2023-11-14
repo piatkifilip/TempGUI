@@ -14,10 +14,9 @@ def create_plot_window(root):
 
     return plot_window, frame_plot
 
-def update_plot(data_sheets, fig, canvas):
+def update_plot(data_sheets, fig, canvas,nrows,ncols):
     if data_sheets:
         fig.clf()
-        nrows, ncols = 4, 4  # Adjust as needed for the number of sheets
         for i, (file_name, sheet_name, data) in enumerate(data_sheets, start=1):
             ax = fig.add_subplot(nrows, ncols, i)
             ax.plot(data['TunnelTemp'], label='Actual', color='purple')

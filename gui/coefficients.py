@@ -1,6 +1,8 @@
 # gui/coefficients.py
 
 import tkinter as tk
+from tkinter import filedialog
+import ast
 from models.equations import terms, default_coeffs, current_equation_set
 selected_set = 1
 
@@ -9,12 +11,16 @@ class CoefficientsWindow:
         self.master = master
         self.main_window = main_window
         self.setup_ui()
-
+        self.main_window.coefficients_window = self
     def setup_ui(self):
         # Checkbutton for selecting equation set
         self.eq_set_var = tk.IntVar(value=selected_set)
         self.eq_set_checkbutton = tk.Checkbutton(self.master, text="Equation 1, 2, 3", variable=self.eq_set_var, command=self.toggle_equation_set)
         self.eq_set_checkbutton.pack()
+
+        self.nrows_var = tk.IntVar(value=4)
+        self.ncols_var = tk.IntVar(value=4)
+        self.setup_scroll_inputs()
 
         # Main frame for coefficients
         coeffs_main_frame = tk.Frame(self.master)
@@ -35,6 +41,37 @@ class CoefficientsWindow:
             frame_pack = tk.Frame(frame)
             frame_pack.pack(fill=tk.X)
             self.coefficient_frames[eq_label] = create_coefficient_inputs(frame_pack, eq_label, default_values)
+
+    def setup_scroll_inputs(self):
+        nrows_spinbox = tk.Spinbox(self.master, from_=1, to=10, textvariable=self.nrows_var)
+        nrows_spinbox.pack()
+        ncols_spinbox = tk.Spinbox(self.master, from_=1, to=10, textvariable=self.ncols_var)
+        ncols_spinbox.pack()
+
+    def load_set_1(self):
+        self.load_coefficients(set_number=1)
+
+    def load_set_2(self):
+        self.load_coefficients(set_number=2)
+
+    def load_coefficients(self, set_number):
+        file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
+        if file_path:
+            with open(file_path, 'r') as file:
+                content = file.read()
+                new_coeffs = ast.literal_eval(f"{{{content}}}")
+                self.update_coefficients(new_coeffs, set_number)
+
+
+    def update_coefficients(self, new_coeffs, set_number):
+        # Assuming new_coeffs is a dictionary with keys as equation labels
+        for eq_label, coeffs in new_coeffs.items():
+            if set_number == 1 and eq_label in ['eq1', 'eq2', 'eq3'] or \
+                    set_number == 2 and eq_label in ['eq4', 'eq5', 'eq6']:
+                entries = self.coefficient_frames[eq_label]
+                for i, entry in enumerate(entries):
+                    entry.delete(0, tk.END)
+                    entry.insert(0, str(coeffs[i]))
 
     def toggle_equation_set(self):
         global selected_set

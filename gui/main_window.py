@@ -2,6 +2,8 @@
 
 import tkinter as tk
 from tkinter import filedialog
+
+import gui.coefficients
 from gui.coefficients import create_coefficient_inputs
 from gui.coefficients import  CoefficientsWindow
 from gui.plot_window import initialize_plot_window, update_plot
@@ -36,6 +38,10 @@ class MainWindow:
         button_load_excel.pack(side=tk.LEFT)
         button_update_plot = tk.Button(button_frame, text="Update Plot", command=self.on_update_plot)
         button_update_plot.pack(side=tk.LEFT)
+        load_set_1_button = tk.Button(button_frame, text="Load Set 1", command=self.coefficients_window.load_set_1)
+        load_set_1_button.pack(side=tk.LEFT)
+        load_set_2_button = tk.Button(button_frame, text="Load Set 2", command=self.coefficients_window.load_set_2)
+        load_set_2_button.pack(side=tk.LEFT)
 
         frame_controls.pack()
 
@@ -52,9 +58,11 @@ class MainWindow:
         print("Coefficients:", coeffs)
         print("Current Equation Set:", current_equation_set)
 
+        nrows = self.coefficients_window.nrows_var.get()
+        ncols = self.coefficients_window.ncols_var.get()
         if self.excel_path:
-            data_sheets = load_and_process_data(self.excel_path, coeffs, current_equation_set)  # Pass current_set
-            update_plot(data_sheets, self.fig, self.canvas)
+            data_sheets = load_and_process_data(self.excel_path, coeffs, current_equation_set)
+            update_plot(data_sheets, self.fig, self.canvas, nrows, ncols)
 
         stats_text = ""  # Initialize an empty string to collect all MEA stats
         for file_name, sheet_name, data in data_sheets:

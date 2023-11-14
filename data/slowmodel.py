@@ -79,7 +79,7 @@ def train_and_print_equation(data, case_name):
         estimator=model_pipeline,
         search_spaces=search_spaces,
         n_iter=100,
-        cv=20,
+        cv=10,
         n_jobs=-1,
         scoring=weighted_scorer,  # Pass the weighted_scorer object
         random_state=42
@@ -107,7 +107,7 @@ def train_and_print_equation(data, case_name):
 
 def write_coefficients_to_file(case_name, coefficients, intercept):
     coeffs_list = list(coefficients) + [intercept]
-    with open("slow.txt", "a") as file:
+    with open("slow.txt", "w") as file:
         file.write(f"'{case_name}': {coeffs_list},\n")
 
 # Train and print the model for each case

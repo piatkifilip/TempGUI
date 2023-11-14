@@ -9,9 +9,9 @@ from sklearn.metrics import mean_absolute_error
 def predict_tunnel_temp(row, coeffs, current_equation_set):
     delta = row['delta']
     if current_equation_set == 1:
-        equation_used = 'eq1' if delta > 2 else 'eq2' if -2 <= delta <= 2 else 'eq3'
+        equation_used = 'eq1' if delta > 3 else 'eq2' if -3 <= delta <= 3 else 'eq3'
     else:  # current_equation_set == 2
-        equation_used = 'eq4' if delta > 2 else 'eq5' if -2 <= delta <= 2 else 'eq6'
+        equation_used = 'eq4' if delta > 3 else 'eq5' if -3 <= delta <= 3 else 'eq6'
 
     predicted_temp = np.dot(coeffs[equation_used], [
         row['HeadTemp1'], row['HeadTemp2'], row['Slope_HeadTemp1'],

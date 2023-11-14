@@ -27,7 +27,7 @@ def calculate_ratio(temp1, temp2):
 # Combine data from multiple files
 data_20C = load_data('20C.xlsx')
 data_30C = load_data('30C.xlsx')
-data_30C16 = load_data('30C-16.xlsx.xlsx')
+data_30C16 = load_data('30C-16.xlsx')
 combined_data = pd.concat([data_20C, data_30C,data_30C16], ignore_index=True)
 
 # Drop rows with NaN values in either features or target
@@ -48,9 +48,9 @@ y = combined_data['TunnelTemp']
 combined_data['Delta_Temp1_Temp2'] = combined_data['HeadTemp1'] - combined_data['HeadTemp2']
 
 # Segment the data based on delta
-data_case_4 = combined_data[combined_data['Delta_Temp1_Temp2'] > 2]
-data_case_5 = combined_data[(combined_data['Delta_Temp1_Temp2'] <= 2) & (combined_data['Delta_Temp1_Temp2'] >= -2)]
-data_case_6 = combined_data[combined_data['Delta_Temp1_Temp2'] < -2]
+data_case_4 = combined_data[combined_data['Delta_Temp1_Temp2'] > 3]
+data_case_5 = combined_data[(combined_data['Delta_Temp1_Temp2'] <= 3) & (combined_data['Delta_Temp1_Temp2'] >= -2)]
+data_case_6 = combined_data[combined_data['Delta_Temp1_Temp2'] < -3]
 
 def custom_scorer(y_true, y_pred):
     weights = np.where((y_true >= 55) & (y_true <= 59), 25, 1)  # Apply more weight within the 55-59 range
@@ -78,7 +78,7 @@ def train_and_print_equation(data, case_name):
         estimator=model_pipeline,
         search_spaces=search_spaces,
         n_iter=100,
-        cv=20,
+        cv=10,
         n_jobs=-1,
         scoring=weighted_scorer,  # Pass the weighted_scorer object
         random_state=42
@@ -105,7 +105,7 @@ def train_and_print_equation(data, case_name):
 
 def write_coefficients_to_file(case_name, coefficients, intercept):
     coeffs_list = list(coefficients) + [intercept]
-    with open("fast.txt", "a") as file:
+    with open("fast.txt", "w") as file:
         file.write(f"'{case_name}': {coeffs_list},\n")
 
 # Train and print the model for each case
