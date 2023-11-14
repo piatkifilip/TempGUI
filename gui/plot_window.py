@@ -17,17 +17,19 @@ def create_plot_window(root):
 def update_plot(data_sheets, fig, canvas):
     if data_sheets:
         fig.clf()
-        nrows, ncols = 4, 2  # Adjust as needed for the number of sheets
+        nrows, ncols = 4, 4  # Adjust as needed for the number of sheets
         for i, (file_name, sheet_name, data) in enumerate(data_sheets, start=1):
             ax = fig.add_subplot(nrows, ncols, i)
-            ax.plot(data['TunnelTemp'], label='Actual TunnelTemp', color='purple')
+            ax.plot(data['TunnelTemp'], label='Actual', color='purple')
+            #ax.plot(data['HeadTemp1'], label='HeadTemp1', color='red')
+            #ax.plot(data['HeadTemp2'], label='HeadTemp2', color='green')
             unique_eqs = data['EquationUsed'].dropna().unique()
             eq_label = ', '.join(unique_eqs)
-            ax.plot(data.index, data['Predicted_TunnelTemp'], label=f'Predicted TunnelTemp ({eq_label})', color='red', linestyle='--')
+            ax.plot(data.index, data['Predicted_TunnelTemp'], label=f'({eq_label})', color='red', linestyle='--')
             ax.set_title(f'{file_name} - {sheet_name}')
             ax.set_xlabel('Time Index')
             ax.set_ylabel('Temperature (°C)')
-            ax.legend(loc='upper right', fontsize='small', fancybox=True, framealpha=0.5)
+            ax.legend(loc='upper left', fontsize='x-small', fancybox=True, framealpha=0.5)
         fig.tight_layout()
         canvas.draw()
     else:
@@ -35,7 +37,7 @@ def update_plot(data_sheets, fig, canvas):
 
 def initialize_plot_window(root):
     plot_window, frame_plot = create_plot_window(root)
-    fig = Figure(figsize=(10, 8))
+    fig = Figure(figsize=(15, 12))
     canvas = FigureCanvasTkAgg(fig, master=frame_plot)
     canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
     return plot_window, fig, canvas

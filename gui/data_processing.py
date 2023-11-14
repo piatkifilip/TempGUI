@@ -3,19 +3,23 @@ import os
 import pandas as pd
 import numpy as np
 from tkinter import messagebox
-from models.equations import default_coeffs
+from models.equations import terms, default_coeffs, current_equation_set
 from sklearn.metrics import mean_absolute_error
 
-def predict_tunnel_temp(row, coeffs):
+def predict_tunnel_temp(row, coeffs, current_equation_set):
     delta = row['delta']
-    equation_used = 'eq1' if delta > 2 else 'eq2' if -2 <= delta <= 2 else 'eq3'
+    if current_equation_set == 1:
+        equation_used = 'eq1' if delta > 2 else 'eq2' if -2 <= delta <= 2 else 'eq3'
+    else:  # current_equation_set == 2
+        equation_used = 'eq4' if delta > 2 else 'eq5' if -2 <= delta <= 2 else 'eq6'
+
     predicted_temp = np.dot(coeffs[equation_used], [
         row['HeadTemp1'], row['HeadTemp2'], row['Slope_HeadTemp1'],
         row['Slope_HeadTemp2'], row['Ratio_HeadTemp1_HeadTemp2'], 1
     ])
     return predicted_temp, equation_used
 
-def load_and_process_data(excel_path, coeffs):
+def load_and_process_data(excel_path, coeffs, current_equation_set):
     try:
         xls = pd.ExcelFile(excel_path)
         data_sheets = []
@@ -26,7 +30,10 @@ def load_and_process_data(excel_path, coeffs):
             df['Slope_HeadTemp2'] = df['HeadTemp2'].diff().fillna(method='bfill')
             df['delta'] = df['HeadTemp1'] - df['HeadTemp2']
             df['Ratio_HeadTemp1_HeadTemp2'] = df['HeadTemp1'].div(df['HeadTemp2'].replace({0: np.nan})).fillna(method='bfill')
-            df['Predicted_TunnelTemp'], df['EquationUsed'] = zip(*df.apply(lambda row: predict_tunnel_temp(row, coeffs), axis=1))
+            df['Predicted_TunnelTemp'], df['EquationUsed'] = zip(*df.apply(lambda row: predict_tunnel_temp(row, coeffs, current_equation_set), axis=1))
+
+            df['HeadTemp1'] = df['HeadTemp1']
+            df['HeadTemp2'] = df ['HeadTemp2']
             data_sheets.append((file_name, sheet_name, df))
         return data_sheets
     except Exception as e:
