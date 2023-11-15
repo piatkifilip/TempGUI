@@ -6,6 +6,7 @@ from sklearn.metrics import make_scorer  # Import make_scorer
 from skopt import BayesSearchCV
 from skopt.space import Real
 import numpy as np
+import datetime
 import joblib
 
 # Function to load data from an Excel file
@@ -49,9 +50,9 @@ y = combined_data['TunnelTemp']
 combined_data['Delta_Temp1_Temp2'] = combined_data['HeadTemp1'] - combined_data['HeadTemp2']
 
 # Segment the data based on delta
-data_case_1 = combined_data[combined_data['Delta_Temp1_Temp2'] > 2]
-data_case_2 = combined_data[(combined_data['Delta_Temp1_Temp2'] <= 2) & (combined_data['Delta_Temp1_Temp2'] >= -2)]
-data_case_3 = combined_data[combined_data['Delta_Temp1_Temp2'] < -2]
+data_case_1 = combined_data[combined_data['Delta_Temp1_Temp2'] > 3]
+data_case_2 = combined_data[(combined_data['Delta_Temp1_Temp2'] <= 3) & (combined_data['Delta_Temp1_Temp2'] >= -3)]
+data_case_3 = combined_data[combined_data['Delta_Temp1_Temp2'] < -23]
 
 def custom_scorer(y_true, y_pred):
     weights = np.where((y_true >= 55) & (y_true <= 59), 25, 1)  # Apply more weight within the 55-59 range
@@ -78,11 +79,11 @@ def train_and_print_equation(data, case_name):
     bayes_search = BayesSearchCV(
         estimator=model_pipeline,
         search_spaces=search_spaces,
-        n_iter=100,
-        cv=10,
+        n_iter=200,
+        cv=20,
         n_jobs=-1,
         scoring=weighted_scorer,  # Pass the weighted_scorer object
-        random_state=42
+        random_state=24
     )
 
     bayes_search.fit(X_train, y_train)
@@ -99,16 +100,29 @@ def train_and_print_equation(data, case_name):
     coefficients = ridge_model.coef_
     intercept = ridge_model.intercept_
     feature_names = X_case.columns
-
+    write_coefficients_to_file(case_name, coefficients, intercept)
     equation_terms = [f"{coeff:.4f}*{name}" for coeff, name in zip(coefficients, feature_names)]
     equation = " + ".join(equation_terms) + f" + {intercept:.4f}"
     print(f'The equation of the best model for {case_name}: TunnelTemp = {equation}\n')
 
 
 def write_coefficients_to_file(case_name, coefficients, intercept):
+    # Convert coefficients and intercept into a list
     coeffs_list = list(coefficients) + [intercept]
-    with open("slow.txt", "w") as file:
+
+    # Get the current date and time
+    current_datetime = datetime.datetime.now()
+
+    # Format the date and time into a string
+    datetime_str = current_datetime.strftime("%Y%m%d-%H%M%S")
+
+    # Create the filename with the current date and time
+    filename = f"{case_name}Slow-{datetime_str}.txt"
+
+    # Open the file and append the data
+    with open(filename, "a") as file:
         file.write(f"'{case_name}': {coeffs_list},\n")
+
 
 # Train and print the model for each case
 train_and_print_equation(data_case_1, "eq1")

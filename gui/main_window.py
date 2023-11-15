@@ -69,7 +69,7 @@ class MainWindow:
 
         for file_name, sheet_name, data in data_sheets:
             mea1 = calculate_mea(data, (35, 65), 'Predicted_TunnelTemp')
-            mea2 = calculate_mea(data, (52, 63), 'Predicted_TunnelTemp')
+            mea2 = calculate_mea(data, (56, 58), 'Predicted_TunnelTemp')
             self.updated_stats_window.update_statistics(sheet_name, mea1, mea2)
         self.update_statistics_window(self.updated_stats_window, data_sheets)
 
@@ -85,5 +85,5 @@ class MainWindow:
         stats_window.tree.delete(*stats_window.tree.get_children())  # Clear existing data
         for file_name, sheet_name, data in data_sheets:
             mea1 = calculate_mea(data, (35, 65), 'Predicted_TunnelTemp')
-            mea2 = calculate_mea(data, (52, 63), 'Predicted_TunnelTemp')
+            mea2 = calculate_mea(data, (56, 58), 'Predicted_TunnelTemp')
             stats_window.update_statistics(sheet_name, mea1, mea2)

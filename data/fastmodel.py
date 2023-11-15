@@ -104,9 +104,22 @@ def train_and_print_equation(data, case_name):
     print(f'The equation of the best model for {case_name}: TunnelTemp = {equation}\n')
 
 def write_coefficients_to_file(case_name, coefficients, intercept):
+    # Convert coefficients and intercept into a list
     coeffs_list = list(coefficients) + [intercept]
-    with open("fast.txt", "w") as file:
+
+    # Get the current date and time
+    current_datetime = datetime.datetime.now()
+
+    # Format the date and time into a string
+    datetime_str = current_datetime.strftime("%Y%m%d-%H%M%S")
+
+    # Create the filename with the current date and time
+    filename = f"{case_name}Slow-{datetime_str}.txt"
+
+    # Open the file and append the data
+    with open(filename, "a") as file:
         file.write(f"'{case_name}': {coeffs_list},\n")
+
 
 # Train and print the model for each case
 train_and_print_equation(data_case_4, "eq4")
