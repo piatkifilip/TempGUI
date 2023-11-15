@@ -64,12 +64,11 @@ class MainWindow:
             data_sheets = load_and_process_data(self.excel_path, coeffs, current_equation_set)
             update_plot(data_sheets, self.fig, self.canvas, nrows, ncols)
 
-        stats_text = ""  # Initialize an empty string to collect all MEA stats
+        self.stats_window.tree.delete(*self.stats_window.tree.get_children())  # Clear existing data
         for file_name, sheet_name, data in data_sheets:
             mea1 = calculate_mea(data, (35, 65), 'Predicted_TunnelTemp')
             mea2 = calculate_mea(data, (52, 63), 'Predicted_TunnelTemp')
-            stats_text = f"Sheet '{sheet_name}' MEA 35-65°C: {mea1}\n          MEA 52-63°C: {mea2}"
-            self.stats_window.update_statistics(stats_text)
+            self.stats_window.update_statistics(sheet_name, mea1, mea2)
 
     def refresh_plot(self):
         self.on_update_plot()

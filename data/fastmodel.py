@@ -49,7 +49,7 @@ combined_data['Delta_Temp1_Temp2'] = combined_data['HeadTemp1'] - combined_data[
 
 # Segment the data based on delta
 data_case_4 = combined_data[combined_data['Delta_Temp1_Temp2'] > 3]
-data_case_5 = combined_data[(combined_data['Delta_Temp1_Temp2'] <= 3) & (combined_data['Delta_Temp1_Temp2'] >= -2)]
+data_case_5 = combined_data[(combined_data['Delta_Temp1_Temp2'] <= 3) & (combined_data['Delta_Temp1_Temp2'] >= -3)]
 data_case_6 = combined_data[combined_data['Delta_Temp1_Temp2'] < -3]
 
 def custom_scorer(y_true, y_pred):
