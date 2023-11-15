@@ -62,12 +62,12 @@ class CoefficientsWindow:
                 new_coeffs = ast.literal_eval(f"{{{content}}}")
                 self.update_coefficients(new_coeffs, set_number)
 
-
     def update_coefficients(self, new_coeffs, set_number):
-        # Assuming new_coeffs is a dictionary with keys as equation labels
+        print(f"Updating coefficients for set {set_number}")
         for eq_label, coeffs in new_coeffs.items():
-            if set_number == 1 and eq_label in ['eq1', 'eq2', 'eq3'] or \
-                    set_number == 2 and eq_label in ['eq4', 'eq5', 'eq6']:
+            if (set_number == 1 and eq_label in ['eq1', 'eq2', 'eq3']) or \
+                    (set_number == 2 and eq_label in ['eq4', 'eq5', 'eq6']):
+                print(f"Updating {eq_label} with coefficients: {coeffs}")
                 entries = self.coefficient_frames[eq_label]
                 for i, entry in enumerate(entries):
                     entry.delete(0, tk.END)
@@ -77,6 +77,7 @@ class CoefficientsWindow:
         global selected_set
         selected_set = self.eq_set_var.get()
         self.update_coefficient_inputs()
+        self.main_window.update_initial_statistics()
 
     def update_coefficient_inputs(self):
         global selected_set

@@ -21,9 +21,11 @@ class MainWindow:
         self.coefficients_window = CoefficientsWindow(self.root, self)
         self.setup_ui()
         self.plot_window, self.fig, self.canvas = initialize_plot_window(root)
-        self.stats_window = StatisticsWindow(self.root)
+        self.initial_stats_window = StatisticsWindow(self.root, title="Initial Statistics")
+        self.updated_stats_window = StatisticsWindow(self.root, title="Updated Statistics")
         self.on_update_plot()  # Load and process the default Excel file
-        self.stats_window = StatisticsWindow(self.root)
+        self.on_load_excel_file()  # Load initial statistics
+
 
     def setup_ui(self):
         self.root.title("Input Coefficients")
@@ -49,26 +51,39 @@ class MainWindow:
         self.excel_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx *.xls")])
         if self.excel_path:
             self.on_update_plot()
+        self.update_initial_statistics()
 
     def on_update_plot(self):
-        global current_equation_set
-        current_equation_set = self.coefficients_window.eq_set_var.get()
+        #global current_equation_set
+        self.current_equation_set = self.coefficients_window.eq_set_var.get()
         coeffs = self.coefficients_window.get_coefficients()
 
         print("Coefficients:", coeffs)
-        print("Current Equation Set:", current_equation_set)
+        print("Current Equation Set:", self.current_equation_set)
 
         nrows = self.coefficients_window.nrows_var.get()
         ncols = self.coefficients_window.ncols_var.get()
         if self.excel_path:
-            data_sheets = load_and_process_data(self.excel_path, coeffs, current_equation_set)
+            data_sheets = load_and_process_data(self.excel_path, coeffs, self.current_equation_set)
             update_plot(data_sheets, self.fig, self.canvas, nrows, ncols)
 
-        self.stats_window.tree.delete(*self.stats_window.tree.get_children())  # Clear existing data
         for file_name, sheet_name, data in data_sheets:
             mea1 = calculate_mea(data, (35, 65), 'Predicted_TunnelTemp')
             mea2 = calculate_mea(data, (52, 63), 'Predicted_TunnelTemp')
-            self.stats_window.update_statistics(sheet_name, mea1, mea2)
+            self.updated_stats_window.update_statistics(sheet_name, mea1, mea2)
+        self.update_statistics_window(self.updated_stats_window, data_sheets)
 
     def refresh_plot(self):
         self.on_update_plot()
+
+    def update_initial_statistics(self):
+        if self.excel_path:
+            data_sheets = load_and_process_data(self.excel_path, default_coeffs, current_equation_set=self.current_equation_set)  # Use default coefficients
+            self.update_statistics_window(self.initial_stats_window, data_sheets)
+
+    def update_statistics_window(self, stats_window, data_sheets):
+        stats_window.tree.delete(*stats_window.tree.get_children())  # Clear existing data
+        for file_name, sheet_name, data in data_sheets:
+            mea1 = calculate_mea(data, (35, 65), 'Predicted_TunnelTemp')
+            mea2 = calculate_mea(data, (52, 63), 'Predicted_TunnelTemp')
+            stats_window.update_statistics(sheet_name, mea1, mea2)
